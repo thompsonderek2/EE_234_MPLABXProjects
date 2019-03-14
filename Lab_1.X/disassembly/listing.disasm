@@ -1,0 +1,241 @@
+Disassembly Listing for Lab_1
+Generated From:
+C:/Users/derek.thompson/MPLABXProjects/Lab_1.X/dist/default/production/Lab_1.X.production.elf
+Jan 24, 2018 12:50:47 PM
+
+---  c:/users/derek.thompson/mplabxprojects/lab_1.x/main.c  ---------------------------------------------
+1:                   /*******************************************************************************
+2:                    * Programmer: Jacob Murray                                                    *
+3:                    * Class: EE 234                                                               *
+4:                    * Programming Assignment: Lab 1                                               *
+5:                    * Date: January 1, 2018                                                       *
+6:                    *                                                                             *
+7:                    * Description: This program reads the states of the on-board buttons of the   *
+8:                    *              Pro MX7 and writes the states to the on-board LEDs             *
+9:                    *                                                                             *
+10:                   ******************************************************************************/
+11:                  
+12:                  #include <p32xxxx.h> // // Need specific PIC32 names for memory regions
+13:                  #include <peripheral/ports.h> // PORTSetPinsDigitalIn (), PORTSetPinsDigitalOut (), PORTRead (), PORTWrite (), BIT_XX, IOPORT_X
+14:                  // Yes, don't forget your prototypes
+15:                  void setup_LEDs (void);
+16:                  void setup_buttons (void);
+17:                  unsigned int get_button_states (void);
+18:                  void output_BTNs_to_LEDs (unsigned int button_states);
+19:                  
+20:                  int main (void)
+21:                  {
+9D000000  27BDFFE0   ADDIU SP, SP, -32
+9D000004  AFBF001C   SW RA, 28(SP)
+9D000008  AFBE0018   SW S8, 24(SP)
+9D00000C  03A0F021   ADDU S8, SP, ZERO
+22:                  	unsigned int button_states = 0;
+9D000010  AFC00010   SW ZERO, 16(S8)
+23:                  
+24:                  	setup_LEDs (); // Output pins
+9D000014  0F400011   JAL setup_LEDs
+9D000018  00000000   NOP
+25:                  	setup_buttons (); // Input pins
+9D00001C  0F40001F   JAL setup_buttons
+9D000020  00000000   NOP
+26:                  
+27:                  	while (1) // Embedded programs run forever
+28:                  	{
+29:                  		// Get the state of the buttons
+30:                  		button_states = get_button_states ();
+9D000024  0F400035   JAL get_button_states
+9D000028  00000000   NOP
+9D00002C  AFC20010   SW V0, 16(S8)
+31:                  		// Write the state of the buttons to the LEDs
+32:                  		output_BTNs_to_LEDs (button_states);
+9D000030  8FC40010   LW A0, 16(S8)
+9D000034  0F40004F   JAL output_BTNs_to_LEDs
+9D000038  00000000   NOP
+33:                  	}
+9D00003C  0B400009   J 0x9D000024
+9D000040  00000000   NOP
+34:                  
+35:                  	return 0;
+36:                  }
+37:                  
+38:                  /*************************************************************
+39:                   * Function: setup_LEDs ()                                   *
+40:                   * Date Created: January 1, 2018                             *
+41:                   * Date Last Modified: January 1, 2018                       *
+42:                   * Description: This function sets up the pins to the        *
+43:                   *              on-board LEDs as output pins                 *
+44:                   * Input parameters: None                                    *
+45:                   * Returns: Nothing                                          *
+46:                   * Usages: Must be called once, before you write to LEDs     *
+47:                   * Preconditions: None                                       *
+48:                   * Postconditions: Pins to LEDs are output pins              *
+49:                   *************************************************************/
+50:                  
+51:                  void setup_LEDs (void)
+52:                  {
+9D000044  27BDFFE8   ADDIU SP, SP, -24
+9D000048  AFBF0014   SW RA, 20(SP)
+9D00004C  AFBE0010   SW S8, 16(SP)
+9D000050  03A0F021   ADDU S8, SP, ZERO
+53:                  	// Setup the four on-board LEDs for write; output pins
+54:                  	// According to the Digilent Pro MX7 Reference Manual
+55:                  	// LED1 -> RG12, LED2 -> RG13, LED3 -> RG14, LED4 -> RG15; NOTE: RG indicates PORTG
+56:                  
+57:                  	// Prototype for necessary function as provided in <peripheral/ports.h>
+58:                  	// void	PORTSetPinsDigitalOut(IoPortId portId, unsigned int outputs);
+59:                  	// IOPORT_G and BIT_XX are defined in <peripheral/ports.h>
+60:                  	PORTSetPinsDigitalOut (IOPORT_G, BIT_12 | BIT_13 | BIT_14 | BIT_15);
+9D000054  24040006   ADDIU A0, ZERO, 6
+9D000058  3405F000   ORI A1, ZERO, -4096
+9D00005C  0F400119   JAL PORTSetPinsDigitalOut
+9D000060  00000000   NOP
+61:                  }
+9D000064  03C0E821   ADDU SP, S8, ZERO
+9D000068  8FBF0014   LW RA, 20(SP)
+9D00006C  8FBE0010   LW S8, 16(SP)
+9D000070  27BD0018   ADDIU SP, SP, 24
+9D000074  03E00008   JR RA
+9D000078  00000000   NOP
+62:                  
+63:                  /*************************************************************
+64:                   * Function: setup_buttons ()                                *
+65:                   * Date Created: January 1, 2018                             *
+66:                   * Date Last Modified: January 1, 2018                       *
+67:                   * Description: This function sets up the pins to the        *
+68:                   *              on-board BTNs as input pins                  *
+69:                   * Input parameters: None                                    *
+70:                   * Returns: Nothing                                          *
+71:                   * Usages: Must be called once, before you read from BTNs    *
+72:                   * Preconditions: None                                       *
+73:                   * Postconditions: Pins to BTNs are input pins               *
+74:                   *************************************************************/
+75:                  
+76:                  void setup_buttons (void)
+77:                  {
+9D00007C  27BDFFE8   ADDIU SP, SP, -24
+9D000080  AFBF0014   SW RA, 20(SP)
+9D000084  AFBE0010   SW S8, 16(SP)
+9D000088  03A0F021   ADDU S8, SP, ZERO
+78:                  	// Setup the three on-board buttons for read; input pins
+79:                  	// According to the Digilent Pro MX7 Reference Manual
+80:                  	// BTN1 -> RG06, BTN2 -> RG07, BTN3 -> RA00; NOTE: RG and RA indicates PORTG and PORTA, respectively
+81:                  
+82:                  	// Prototype for necessary function as provided in <peripheral/ports.h>
+83:                  	// void	PORTSetPinsDigitalIn(IoPortId portId, unsigned int inputs);
+84:                  	// IOPORT_A, IOPORT_G, and BIT_XX are defined in <peripheral/ports.h>
+85:                  	PORTSetPinsDigitalIn (IOPORT_G, BIT_6 | BIT_7);
+9D00008C  24040006   ADDIU A0, ZERO, 6
+9D000090  240500C0   ADDIU A1, ZERO, 192
+9D000094  0F400109   JAL PORTSetPinsDigitalIn
+9D000098  00000000   NOP
+86:                      
+87:                      DDPCONbits.JTAGEN = 0; // Disable JTAG controller so we can use button 3
+9D00009C  3C03BF81   LUI V1, -16511
+9D0000A0  9062F200   LBU V0, -3584(V1)
+9D0000A4  7C0218C4   INS V0, ZERO, 3, 1
+9D0000A8  A062F200   SB V0, -3584(V1)
+88:                      PORTSetPinsDigitalIn (IOPORT_A, BIT_0);
+9D0000AC  00002021   ADDU A0, ZERO, ZERO
+9D0000B0  24050001   ADDIU A1, ZERO, 1
+9D0000B4  0F400109   JAL PORTSetPinsDigitalIn
+9D0000B8  00000000   NOP
+89:                  }
+9D0000BC  03C0E821   ADDU SP, S8, ZERO
+9D0000C0  8FBF0014   LW RA, 20(SP)
+9D0000C4  8FBE0010   LW S8, 16(SP)
+9D0000C8  27BD0018   ADDIU SP, SP, 24
+9D0000CC  03E00008   JR RA
+9D0000D0  00000000   NOP
+90:                  
+91:                  /*************************************************************
+92:                   * Function: get_button_states ()                            *
+93:                   * Date Created: January 1, 2018                             *
+94:                   * Date Last Modified: January 1, 2018                       *
+95:                   * Description: This function reads the state of the         *
+96:                   *              on-board buttons. 1 - indicates button       *
+97:                   *              is pressed, 0 - otherwise                    *
+98:                   * Input parameters: None                                    *
+99:                   * Returns: Values of BTNs                                   *
+100:                  * Usages: Must be called after BTNs have been set to output *
+101:                  * Preconditions: None                                       *
+102:                  * Postconditions: Masked state of buttons                   *
+103:                  *************************************************************/
+104:                 
+105:                 unsigned int get_button_states (void)
+106:                 {
+9D0000D4  27BDFFD8   ADDIU SP, SP, -40
+9D0000D8  AFBF0024   SW RA, 36(SP)
+9D0000DC  AFBE0020   SW S8, 32(SP)
+9D0000E0  AFB0001C   SW S0, 28(SP)
+9D0000E4  03A0F021   ADDU S8, SP, ZERO
+107:                 	unsigned int button_states = 0;
+9D0000E8  AFC00010   SW ZERO, 16(S8)
+108:                 
+109:                 	// Read the entire 32-bit PORTA and PORTG to get the state of the on-board buttons
+110:                 	// Mask the PORT bits so that the corresponding buttons bits are isolated;
+111:                 	// We do not care about the other 31-bits of PORT A or 30-bits of PORTG;
+112:                 	// Little Endian is used: bit31 bit30 bit29 ... bit02 bit01 bit00
+113:                 	// 1 hex digit = 1 nibble = 4 bits
+114:                 	// unsigned int	PORTRead(IoPortId portId);
+115:                 	button_states = ((PORTRead (IOPORT_A) & 0x00000001) << 2) |       // BTN3 -> RA00
+9D0000EC  00002021   ADDU A0, ZERO, ZERO
+9D0000F0  0F400133   JAL PORTRead
+9D0000F4  00000000   NOP
+9D0000F8  30420001   ANDI V0, V0, 1
+9D0000FC  00028080   SLL S0, V0, 2
+9D000114  02021025   OR V0, S0, V0
+9D000118  AFC20010   SW V0, 16(S8)
+116:                                     ((PORTRead (IOPORT_G) & 0x000000C0) >> 6); // BTN1 -> RG06, BTN2 -> RG07
+9D000100  24040006   ADDIU A0, ZERO, 6
+9D000104  0F400133   JAL PORTRead
+9D000108  00000000   NOP
+9D00010C  304200C0   ANDI V0, V0, 192
+9D000110  00021182   SRL V0, V0, 6
+117:                 
+118:                 	return button_states;
+9D00011C  8FC20010   LW V0, 16(S8)
+119:                 }
+9D000120  03C0E821   ADDU SP, S8, ZERO
+9D000124  8FBF0024   LW RA, 36(SP)
+9D000128  8FBE0020   LW S8, 32(SP)
+9D00012C  8FB0001C   LW S0, 28(SP)
+9D000130  27BD0028   ADDIU SP, SP, 40
+9D000134  03E00008   JR RA
+9D000138  00000000   NOP
+120:                 
+121:                 /*************************************************************
+122:                  * Function: output_BTNs_to_LEDs ()                          *
+123:                  * Date Created: January 1, 2018                             *
+124:                  * Date Last Modified: January 1, 2018                       *
+125:                  * Description: This function writes the state of the BTNs   *
+126:                  *              to the LEDs. If BTN is pressed, then LED     *
+127:                  *              turns on. BTN1 -> LED1, BTN2 -> LED2, ...    *
+128:                  * Input parameters: Values of BTNs                          *
+129:                  * Returns: Nothing                                          *
+130:                  * Usages: Must be called after BTNs are read                *
+131:                  * Preconditions: BTNs must be masked                        *
+132:                  * Postconditions: LEDs contain state of buttons             *
+133:                  *************************************************************/
+134:                 
+135:                 void output_BTNs_to_LEDs (unsigned int button_states)
+136:                 {
+9D00013C  27BDFFE0   ADDIU SP, SP, -32
+9D000140  AFBF001C   SW RA, 28(SP)
+9D000144  AFBE0018   SW S8, 24(SP)
+9D000148  03A0F021   ADDU S8, SP, ZERO
+9D00014C  AFC40020   SW A0, 32(S8)
+137:                 	unsigned int shifted_states = button_states << 12; // Need to align BTNS to corresponding LED bit positions;
+9D000150  8FC20020   LW V0, 32(S8)
+9D000154  00021300   SLL V0, V0, 12
+9D000158  AFC20010   SW V0, 16(S8)
+138:                 	// BTN1 -> LED1, BTN2 -> LED2, BTN3 -> LED3 ====> button_states[0] -> RG12, etc...
+139:                 
+140:                 	// void	PORTWrite(IoPortId portId, unsigned int bits);
+141:                 	PORTWrite (IOPORT_G, shifted_states);
+9D00015C  24040006   ADDIU A0, ZERO, 6
+9D000160  8FC50010   LW A1, 16(S8)
+9D000164  0F400129   JAL PORTWrite
+9D000168  00000000   NOP
+142:                 }
+9D00016C  03C0E821   ADDU SP, S8, ZERO
+143:                 
